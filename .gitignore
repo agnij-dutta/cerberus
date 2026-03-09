@@ -1,0 +1,72 @@
+# =============================================================================
+# Cerberus .gitignore
+# =============================================================================
+
+# --- Environment & Secrets ---
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# --- Node.js ---
+node_modules/
+.next/
+out/
+.nuxt/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Build artifacts ---
+*.so
+*.dylib
+
+# --- Data volumes (local dev) ---
+infra/data/
+*.db
+*.sqlite3
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Misc ---
+.cache/
+tmp/
+temp/

@@ -1,0 +1,48 @@
+{
+  "name": "@cerberus/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for Cerberus Rate-Limit-as-a-Service",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["rate-limiting", "api", "sdk", "cerberus"],
+  "author": "Agnij Dutta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AgnijDutta/cerberus.git",
+    "directory": "sdk/typescript"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0"
+  },
+  "tsconfig": {
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "commonjs",
+      "lib": ["ES2022", "DOM"],
+      "declaration": true,
+      "strict": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"]
+  }
+}
