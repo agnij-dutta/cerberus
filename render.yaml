@@ -1,0 +1,27 @@
+# Render Blueprint — deploy with "New > Blueprint Instance" on render.com
+# Docs: https://docs.render.com/infrastructure-as-code
+
+services:
+  - type: web
+    name: cerberus-api
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    repo: https://github.com/agnij-dutta/cerberus.git
+    branch: main
+    plan: free
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: CERBERUS_REDIS_URL
+        sync: false # set manually — Upstash Redis URL
+      - key: CERBERUS_DATABASE_URL
+        sync: false # set manually — Neon Postgres URL
+      - key: CERBERUS_ADMIN_API_KEY
+        generateValue: true
+      - key: CERBERUS_WORKERS
+        value: "2"
+      - key: CERBERUS_LOG_LEVEL
+        value: "info"
+      - key: CERBERUS_METRICS_ENABLED
+        value: "true"

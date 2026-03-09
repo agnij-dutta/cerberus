@@ -11,7 +11,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Optional
 
-from pydantic import Field, PostgresDsn, RedisDsn
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -50,15 +50,13 @@ class Settings(BaseSettings):
     allowed_origins: list[str] = Field(default_factory=lambda: ["*"])
 
     # -- Redis -----------------------------------------------------------------
-    redis_url: RedisDsn = "redis://localhost:6379/0"  # type: ignore[assignment]
+    redis_url: str = "redis://localhost:6379/0"
     redis_max_connections: int = 50
     redis_socket_timeout: float = 1.0  # seconds
     redis_socket_connect_timeout: float = 1.0
 
     # -- PostgreSQL ------------------------------------------------------------
-    database_url: PostgresDsn = (
-        "postgresql+asyncpg://cerberus:cerberus@localhost:5432/cerberus"  # type: ignore[assignment]
-    )
+    database_url: str = "postgresql+asyncpg://cerberus:cerberus@localhost:5432/cerberus"
     db_pool_size: int = 10
     db_max_overflow: int = 20
     db_pool_recycle: int = 300  # seconds

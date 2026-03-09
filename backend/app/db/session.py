@@ -33,13 +33,25 @@ def init_db() -> None:
 
     settings = get_settings()
 
+    # Neon and other hosted Postgres services use postgresql:// URLs.
+    # SQLAlchemy async needs the asyncpg driver prefix.
+    db_url = str(settings.database_url)
+    if db_url.startswith("postgresql://"):
+        db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+    # Neon requires SSL — pass connect_args for asyncpg when sslmode is present
+    connect_args = {}
+    if "sslmode=require" in db_url or db_url.startswith("postgresql+asyncpg://") and "neon.tech" in db_url:
+        connect_args["ssl"] = True
+
     _engine = create_async_engine(
-        str(settings.database_url),
+        db_url,
         pool_size=settings.db_pool_size,
         max_overflow=settings.db_max_overflow,
         pool_recycle=settings.db_pool_recycle,
         pool_pre_ping=True,
         echo=settings.debug,
+        connect_args=connect_args,
     )
 
     _session_factory = async_sessionmaker(
