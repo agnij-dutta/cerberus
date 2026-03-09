@@ -158,6 +158,75 @@ kubectl create secret generic cerberus-secrets \
   --from-literal=redis-url='redis://...'
 ```
 
+## Free-Tier Cloud Deployment (Current Setup)
+
+Cerberus runs on a zero-cost cloud stack. Here's what's deployed and how.
+
+### Architecture
+
+```
+Browser → Vercel (Next.js SSR + CDN)
+              │
+              ├─ Static pages served from edge
+              └─ /api/v1/* rewrites (server-side proxy)
+                      │
+                      ▼
+              Render (FastAPI + Gunicorn)
+                 │         │
+                 ▼         ▼
+           Upstash      Neon
+           (Redis)    (PostgreSQL)
+```
+
+### Providers
+
+| Component | Provider | Tier | Limits |
+|-----------|----------|------|--------|
+| Frontend | Vercel | Free | 100GB bandwidth/month |
+| Backend | Render | Free | 750 hours/month, spins down after 15min idle |
+| PostgreSQL | Neon | Free | 0.5GB storage, auto-suspend after 5min |
+| Redis | Upstash | Free | 10k commands/day, 256MB storage |
+
+### Environment Variables
+
+**Render (Backend):**
+```
+DATABASE_URL=postgresql://user:pass@ep-xyz.us-east-2.aws.neon.tech/cerberus?sslmode=require
+REDIS_URL=rediss://default:pass@us1-xyz.upstash.io:6379
+ADMIN_API_KEY=your-secure-admin-key
+ENVIRONMENT=production
+LOG_LEVEL=info
+```
+
+**Vercel (Frontend):**
+No required env vars. The API proxy is configured in `vercel.json`.
+
+### Keeping Render Alive
+
+Render free tier kills idle services after 15 minutes. Cold starts take 30-50 seconds.
+
+**Solution:** A cron job on [cron-job.org](https://cron-job.org) hits `GET /healthz` every 10 minutes. This endpoint returns `{"status": "ok"}` without touching Redis or Postgres, so it doesn't burn through Upstash's command quota.
+
+### Neon URL Conversion
+
+Neon provides `postgresql://` URLs. SQLAlchemy + asyncpg needs `postgresql+asyncpg://`. The backend auto-converts this at startup — no manual URL editing needed.
+
+### Upstash TLS
+
+Upstash requires TLS. It provides `rediss://` URLs (double 's'). redis-py handles this natively.
+
+### Upgrading from Free Tier
+
+When you outgrow free limits:
+1. Render → Railway or Fly.io (better cold starts)
+2. Upstash → Upstash Pro or self-hosted Redis
+3. Neon → Neon Pro or Supabase
+4. Vercel stays (generous free tier)
+
+No code changes needed — everything is configured via environment variables.
+
+For the full rationale, see [ADR 004: Deployment Architecture](adr/004-deployment-architecture.md).
+
 ## Cloud Deployment Considerations
 
 ### AWS

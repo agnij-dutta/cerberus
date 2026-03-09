@@ -172,6 +172,7 @@ if (!result.allowed) {
 - [API Reference](docs/api-reference.md)
 - [Architecture](docs/architecture.md)
 - [Deployment Guide](docs/deployment.md)
+- [Changelog](docs/CHANGELOG.md)
 - [Contributing](docs/CONTRIBUTING.md)
 - Architecture Decision Records: [ADR Index](docs/adr/)
 

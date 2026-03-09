@@ -14,7 +14,7 @@ That's it. Everything else runs in containers.
 ## 1. Clone and Start
 
 ```bash
-git clone https://github.com/your-org/cerberus.git
+git clone https://github.com/agnij-dutta/cerberus.git
 cd cerberus
 
 # Fire up the whole stack

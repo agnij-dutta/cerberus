@@ -13,7 +13,7 @@ Hey, thanks for considering a contribution. We appreciate it.
 
 1. Fork and clone:
 ```bash
-git clone https://github.com/your-username/cerberus.git
+git clone https://github.com/agnij-dutta/cerberus.git
 cd cerberus
 ```
 
