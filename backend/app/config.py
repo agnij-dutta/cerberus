@@ -7,15 +7,14 @@ other services in the same pod / compose stack.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from functools import lru_cache
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Environment(str, Enum):
+class Environment(StrEnum):
     """Deployment environment."""
 
     DEV = "dev"
@@ -62,7 +61,7 @@ class Settings(BaseSettings):
     db_pool_recycle: int = 300  # seconds
 
     # -- Auth ------------------------------------------------------------------
-    admin_api_key: Optional[str] = None  # bootstrap key for tenant management
+    admin_api_key: str | None = None  # bootstrap key for tenant management
     api_key_cache_size: int = 1024
     api_key_cache_ttl: int = 300  # seconds
 

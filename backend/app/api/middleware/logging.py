@@ -9,12 +9,8 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import TYPE_CHECKING
 
 import structlog
-
-if TYPE_CHECKING:
-    pass
 
 
 def setup_logging(log_level: str = "INFO", json_output: bool = True) -> None:

@@ -9,9 +9,7 @@ to avoid hitting the database on every request.
 from __future__ import annotations
 
 import hashlib
-from functools import lru_cache
-from typing import TYPE_CHECKING, Optional
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 import structlog
 from sqlalchemy import select
@@ -21,6 +19,8 @@ from app.core.exceptions import AuthenticationError
 from app.db.models.tenant import Tenant
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = structlog.get_logger(__name__)

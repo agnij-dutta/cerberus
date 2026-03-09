@@ -2,17 +2,14 @@
 Request/response schemas for policy CRUD endpoints.
 """
 
-from __future__ import annotations
-
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
 
 
-class AlgorithmType(str, Enum):
+class AlgorithmType(StrEnum):
     SLIDING_WINDOW = "sliding_window"
     TOKEN_BUCKET = "token_bucket"
 
@@ -42,7 +39,7 @@ class PolicyCreate(BaseModel):
         le=86400,
         description="Window duration in seconds (used by sliding_window).",
     )
-    refill_rate: Optional[float] = Field(
+    refill_rate: float | None = Field(
         default=None,
         ge=0.01,
         le=1_000_000,
@@ -60,11 +57,11 @@ class PolicyCreate(BaseModel):
 class PolicyUpdate(BaseModel):
     """Schema for partial policy updates."""
 
-    name: Optional[str] = Field(None, min_length=1, max_length=255)
-    limit: Optional[int] = Field(None, ge=1, le=10_000_000)
-    window_seconds: Optional[int] = Field(None, ge=1, le=86400)
-    refill_rate: Optional[float] = Field(None, ge=0.01, le=1_000_000)
-    is_active: Optional[bool] = None
+    name: str | None = Field(None, min_length=1, max_length=255)
+    limit: int | None = Field(None, ge=1, le=10_000_000)
+    window_seconds: int | None = Field(None, ge=1, le=86400)
+    refill_rate: float | None = Field(None, ge=0.01, le=1_000_000)
+    is_active: bool | None = None
 
 
 class PolicyResponse(BaseModel):
@@ -76,7 +73,7 @@ class PolicyResponse(BaseModel):
     algorithm: AlgorithmType
     limit: int
     window_seconds: int
-    refill_rate: Optional[float]
+    refill_rate: float | None
     is_active: bool
     created_at: datetime
     updated_at: datetime

@@ -6,8 +6,6 @@ exactly once.  After creation, only the SHA-256 hash and an 8-character
 prefix are stored.
 """
 
-from __future__ import annotations
-
 import secrets
 
 from fastapi import APIRouter, Query

@@ -9,18 +9,18 @@ because policies change infrequently.
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, Optional
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 import structlog
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import PolicyNotFound
+from app.core.exceptions import PolicyNotFoundError
 from app.db.models.policy import Policy
 
 if TYPE_CHECKING:
-    pass
+    from uuid import UUID
+
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = structlog.get_logger(__name__)
 
@@ -53,7 +53,7 @@ class PolicyManager:
 
     # -- Cache helpers ---------------------------------------------------------
 
-    def _get_cached(self, policy_id: UUID) -> Optional[Policy]:
+    def _get_cached(self, policy_id: UUID) -> Policy | None:
         entry = self._cache.get(policy_id)
         if entry is None:
             return None
@@ -81,7 +81,7 @@ class PolicyManager:
 
         Raises
         ------
-        PolicyNotFound
+        PolicyNotFoundError
             If no active policy exists with the given ID.
         """
         cached = self._get_cached(policy_id)
@@ -93,7 +93,7 @@ class PolicyManager:
         policy = result.scalar_one_or_none()
 
         if policy is None:
-            raise PolicyNotFound(str(policy_id))
+            raise PolicyNotFoundError(str(policy_id))
 
         self._set_cached(policy)
         return policy

@@ -2,8 +2,6 @@
 Request/response schemas for the rate-limit check endpoint.
 """
 
-from __future__ import annotations
-
 from uuid import UUID
 
 from pydantic import BaseModel, Field

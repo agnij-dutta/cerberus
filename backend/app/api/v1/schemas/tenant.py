@@ -2,17 +2,14 @@
 Request/response schemas for tenant management endpoints.
 """
 
-from __future__ import annotations
-
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 
-class TenantTierSchema(str, Enum):
+class TenantTierSchema(StrEnum):
     FREE = "free"
     PRO = "pro"
     ENTERPRISE = "enterprise"

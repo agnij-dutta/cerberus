@@ -5,8 +5,6 @@ Tenants can create, read, update, and soft-delete their own policies.
 Cross-tenant access is blocked at the service layer.
 """
 
-from __future__ import annotations
-
 from uuid import UUID
 
 from fastapi import APIRouter, Query

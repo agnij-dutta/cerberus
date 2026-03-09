@@ -9,7 +9,6 @@ for webhooks, etc.).
 from __future__ import annotations
 
 import enum
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import Boolean, Enum, Float, ForeignKey, Index, Integer, String
@@ -19,7 +18,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, TimestampMixin, UUIDPrimaryKey
 
 
-class Algorithm(str, enum.Enum):
+class Algorithm(enum.StrEnum):
     SLIDING_WINDOW = "sliding_window"
     TOKEN_BUCKET = "token_bucket"
 
@@ -47,15 +46,13 @@ class Policy(Base, UUIDPrimaryKey, TimestampMixin):
     )
     limit: Mapped[int] = mapped_column(Integer, nullable=False)
     window_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
-    refill_rate: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    refill_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     # Relationship back to tenant
     tenant = relationship("Tenant", back_populates="policies")
 
-    __table_args__ = (
-        Index("ix_policies_tenant_active", "tenant_id", "is_active"),
-    )
+    __table_args__ = (Index("ix_policies_tenant_active", "tenant_id", "is_active"),)
 
     def __repr__(self) -> str:
         return f"<Policy {self.name} [{self.algorithm.value}] limit={self.limit}>"

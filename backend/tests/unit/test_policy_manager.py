@@ -13,7 +13,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from app.core.exceptions import PolicyNotFound
+from app.core.exceptions import PolicyNotFoundError
 from app.core.policy import PolicyManager
 
 
@@ -101,13 +101,13 @@ class TestPolicyManagerGet:
 
     @pytest.mark.asyncio
     async def test_raises_not_found(self, policy_manager: PolicyManager):
-        """Missing policies should raise PolicyNotFound."""
+        """Missing policies should raise PolicyNotFoundError."""
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
         mock_session = AsyncMock()
         mock_session.execute.return_value = mock_result
 
-        with pytest.raises(PolicyNotFound):
+        with pytest.raises(PolicyNotFoundError):
             await policy_manager.get(mock_session, uuid.uuid4())
 
     @pytest.mark.asyncio

@@ -2,8 +2,6 @@
 Schemas for the analytics endpoint.
 """
 
-from __future__ import annotations
-
 from pydantic import BaseModel, Field
 
 

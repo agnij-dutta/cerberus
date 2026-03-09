@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, TimestampMixin, UUIDPrimaryKey
 
 
-class TenantTier(str, enum.Enum):
+class TenantTier(enum.StrEnum):
     FREE = "free"
     PRO = "pro"
     ENTERPRISE = "enterprise"
@@ -44,9 +44,7 @@ class Tenant(Base, UUIDPrimaryKey, TimestampMixin):
     # Relationship — a tenant owns many policies
     policies = relationship("Policy", back_populates="tenant", lazy="selectin")
 
-    __table_args__ = (
-        Index("ix_tenants_api_key_prefix", "api_key_prefix"),
-    )
+    __table_args__ = (Index("ix_tenants_api_key_prefix", "api_key_prefix"),)
 
     def __repr__(self) -> str:
         return f"<Tenant {self.name} ({self.tier.value})>"

@@ -75,11 +75,9 @@ curl -X POST https://api.cerberus.dev/v1/check \\
   },
 ];
 
-function highlightCode(code: string, lang: string) {
+function highlightCode(code: string, _lang: string) {
   // Simple syntax highlighting — good enough for demo, no heavy deps
   return code.split("\n").map((line, i) => {
-    let highlighted = line;
-
     // Comments
     if (line.trimStart().startsWith("#") || line.trimStart().startsWith("//")) {
       return (
@@ -88,9 +86,6 @@ function highlightCode(code: string, lang: string) {
         </span>
       );
     }
-
-    // Strings
-    highlighted = line;
 
     return (
       <span key={i}>

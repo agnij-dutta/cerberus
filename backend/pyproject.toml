@@ -40,10 +40,21 @@ dev = [
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM", "TCH"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM", "TC"]
 ignore = ["A003"]  # allow shadowing builtins on models (id, type, etc.)
 
-[tool.ruff.isort]
+[tool.ruff.lint.per-file-ignores]
+# SQLAlchemy models need runtime type imports for Mapped[] annotations
+"app/db/base.py" = ["TC003"]
+"app/db/models/*" = ["TC003"]
+# Pydantic schemas need runtime type imports for model fields
+"app/api/v1/schemas/*" = ["TC003"]
+# FastAPI endpoints need Annotated dependency aliases and path param types at runtime
+"app/api/v1/endpoints/*" = ["TC001", "TC003"]
+
+[tool.ruff.lint.isort]
 known-first-party = ["app"]
 
 [tool.mypy]

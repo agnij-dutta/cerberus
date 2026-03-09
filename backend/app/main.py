@@ -8,7 +8,7 @@ with middleware, routers, exception handlers, and lifespan management.
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator
+from typing import TYPE_CHECKING
 
 import structlog
 from fastapi import FastAPI, Request
@@ -24,6 +24,9 @@ from app.api.v1.router import router as v1_router
 from app.config import get_settings
 from app.core.exceptions import CerberusError
 from app.db.session import close_db, init_db
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 logger = structlog.get_logger(__name__)
 
@@ -109,7 +112,7 @@ def create_app() -> FastAPI:
 
     # -- Routes ----------------------------------------------------------------
     app.include_router(health_router)  # /healthz, /readyz at root
-    app.include_router(v1_router)      # everything else under /v1
+    app.include_router(v1_router)  # everything else under /v1
 
     return app
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Shield, Zap, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const codeSnippet = `curl -X POST https://api.cerberus.dev/v1/check \\

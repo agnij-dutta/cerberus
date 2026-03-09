@@ -14,8 +14,6 @@ Typical latency budget:
   ~0.5 ms  total
 """
 
-from __future__ import annotations
-
 from fastapi import APIRouter, Response
 
 from app.api.v1.schemas.check import CheckRequest, CheckResponse

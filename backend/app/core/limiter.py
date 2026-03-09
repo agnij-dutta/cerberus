@@ -10,16 +10,13 @@ from __future__ import annotations
 
 from datetime import date
 from typing import TYPE_CHECKING
-from uuid import UUID
 
 import structlog
 
-from app.core.algorithms.base import RateLimitResult
 from app.core.algorithms.sliding_window import SlidingWindowCounter
 from app.core.algorithms.token_bucket import TokenBucket
-from app.core.exceptions import InvalidPolicy, RedisUnavailable
+from app.core.exceptions import InvalidPolicyError, RedisUnavailableError
 from app.core.keys import analytics_counter_key, analytics_rejected_key, rate_limit_key
-from app.core.policy import PolicyManager
 from app.metrics.prometheus import (
     CACHE_HITS,
     CACHE_MISSES,
@@ -30,8 +27,13 @@ from app.metrics.prometheus import (
 )
 
 if TYPE_CHECKING:
+    from uuid import UUID
+
     from redis.asyncio import Redis
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.core.algorithms.base import RateLimitResult
+    from app.core.policy import PolicyManager
 
 logger = structlog.get_logger(__name__)
 
@@ -94,7 +96,7 @@ class LimiterService:
                     error=str(exc),
                     exc_info=True,
                 )
-                raise RedisUnavailable() from exc
+                raise RedisUnavailableError() from exc
 
         # Track analytics asynchronously — fire and forget
         await self._track_analytics(redis, tenant_id, result)
@@ -130,7 +132,7 @@ class LimiterService:
             )
         elif policy.algorithm == "token_bucket":
             if policy.refill_rate is None:
-                raise InvalidPolicy(
+                raise InvalidPolicyError(
                     f"Policy {policy.id} uses token_bucket but has no refill_rate."
                 )
             return await self._token_bucket.check(
@@ -140,7 +142,7 @@ class LimiterService:
                 refill_rate=policy.refill_rate,
             )
         else:
-            raise InvalidPolicy(f"Unknown algorithm: {policy.algorithm}")
+            raise InvalidPolicyError(f"Unknown algorithm: {policy.algorithm}")
 
     async def _track_analytics(
         self,

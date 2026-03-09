@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from app.core.algorithms.base import RateLimitAlgorithm, RateLimitResult
 from app.utils.time import now_microseconds
@@ -31,7 +31,7 @@ class SlidingWindowCounter(RateLimitAlgorithm):
 
     def __init__(self) -> None:
         self._script_src: str = _LUA_PATH.read_text()
-        self._sha: Optional[str] = None
+        self._sha: str | None = None
 
     async def _ensure_script(self, redis: Redis) -> str:  # type: ignore[type-arg]
         """Load the Lua script into Redis and cache the SHA."""

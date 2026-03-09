@@ -7,7 +7,7 @@ requests.  Each request gets its own session from the factory.
 
 from __future__ import annotations
 
-from typing import AsyncGenerator
+from typing import TYPE_CHECKING
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -17,6 +17,9 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from app.config import get_settings
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 # Module-level singletons — initialised by ``init_db`` at startup.
 _engine: AsyncEngine | None = None
@@ -41,7 +44,9 @@ def init_db() -> None:
 
     # Neon requires SSL — pass connect_args for asyncpg when sslmode is present
     connect_args = {}
-    if "sslmode=require" in db_url or db_url.startswith("postgresql+asyncpg://") and "neon.tech" in db_url:
+    if "sslmode=require" in db_url or (
+        db_url.startswith("postgresql+asyncpg://") and "neon.tech" in db_url
+    ):
         connect_args["ssl"] = True
 
     _engine = create_async_engine(

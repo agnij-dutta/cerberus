@@ -6,7 +6,7 @@ Centralises all injectable dependencies so endpoints stay thin and testable.
 
 from __future__ import annotations
 
-from typing import Annotated, AsyncGenerator
+from typing import Annotated
 
 import structlog
 from fastapi import Depends, Header, Request
@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import authenticate_api_key, is_admin_key
 from app.config import Settings, get_settings
-from app.core.exceptions import AuthenticationError, AuthorisationError
+from app.core.exceptions import AuthorisationError
 from app.core.limiter import LimiterService
 from app.core.policy import PolicyManager
 from app.db.models.tenant import Tenant

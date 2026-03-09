@@ -6,8 +6,6 @@ Health-check endpoints.
                database and Redis are reachable.
 """
 
-from __future__ import annotations
-
 from fastapi import APIRouter, Request, Response
 from sqlalchemy import text
 

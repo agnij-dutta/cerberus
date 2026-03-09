@@ -6,8 +6,6 @@ This is intentionally approximate — we trade strict accuracy for zero
 impact on the hot path.
 """
 
-from __future__ import annotations
-
 from datetime import date, timedelta
 
 from fastapi import APIRouter, Query

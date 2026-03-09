@@ -7,7 +7,7 @@ serialised into a consistent error envelope by the global exception handler.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 
 class CerberusError(Exception):
@@ -21,7 +21,7 @@ class CerberusError(Exception):
         self,
         detail: str = "An unexpected error occurred.",
         *,
-        extra: Optional[dict[str, Any]] = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(detail)
         self.detail = detail
@@ -40,7 +40,7 @@ class CerberusError(Exception):
         return body
 
 
-class RateLimitExceeded(CerberusError):
+class RateLimitExceededError(CerberusError):
     """Raised when a rate-limit check fails (429)."""
 
     status_code = 429
@@ -59,7 +59,7 @@ class RateLimitExceeded(CerberusError):
         self.limit = limit
 
 
-class PolicyNotFound(CerberusError):
+class PolicyNotFoundError(CerberusError):
     """Raised when a requested policy does not exist."""
 
     status_code = 404
@@ -70,7 +70,7 @@ class PolicyNotFound(CerberusError):
         super().__init__(f"Policy '{policy_id}' does not exist.")
 
 
-class TenantNotFound(CerberusError):
+class TenantNotFoundError(CerberusError):
     """Raised when tenant lookup fails."""
 
     status_code = 404
@@ -103,7 +103,7 @@ class AuthorisationError(CerberusError):
         super().__init__(detail)
 
 
-class InvalidPolicy(CerberusError):
+class InvalidPolicyError(CerberusError):
     """Raised when policy validation fails."""
 
     status_code = 422
@@ -111,7 +111,7 @@ class InvalidPolicy(CerberusError):
     title = "Invalid Policy"
 
 
-class RedisUnavailable(CerberusError):
+class RedisUnavailableError(CerberusError):
     """Raised when Redis is unreachable and we can't do a graceful fallback."""
 
     status_code = 503
