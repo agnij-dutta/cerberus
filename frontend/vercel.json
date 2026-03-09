@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/v1/:path*",
-      "destination": "https://cerberus-api.onrender.com/v1/:path*"
+      "destination": "https://cerberus-api-eg8l.onrender.com/v1/:path*"
     }
   ],
   "headers": [
