@@ -13,11 +13,9 @@
 // ---------------------------------------------------------------------------
 
 function getBaseUrl(): string {
-  if (typeof window === "undefined") return "/api/v1";
-  const isDev =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
-  return isDev ? "http://localhost:8000/v1" : "/api/v1";
+  // Always use the /api/v1 prefix — Next.js rewrites handle proxying
+  // to the backend (localhost in dev, Render in production via vercel.json)
+  return "/api/v1";
 }
 
 // ---------------------------------------------------------------------------
@@ -201,48 +199,20 @@ export const api = {
   // -- Auth (JWT-based) ----------------------------------------------------
 
   async signup(name: string, email: string, password: string): Promise<SignupResponse> {
-    const baseUrl = getBaseUrl();
-    const response = await fetch(`${baseUrl}/auth/signup`, {
+    const data = await request<SignupResponse>("/auth/signup", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
     });
-
-    if (!response.ok) {
-      let errorBody: ApiError;
-      try {
-        errorBody = await response.json();
-      } catch {
-        errorBody = { status: response.status, detail: "Signup failed" };
-      }
-      throw new CerberusApiError({ ...errorBody, status: response.status });
-    }
-
-    const data: SignupResponse = await response.json();
     setStoredJWT(data.access_token);
     setStoredApiKey(data.api_key);
     return data;
   },
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const baseUrl = getBaseUrl();
-    const response = await fetch(`${baseUrl}/auth/login`, {
+    const data = await request<LoginResponse>("/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
-    if (!response.ok) {
-      let errorBody: ApiError;
-      try {
-        errorBody = await response.json();
-      } catch {
-        errorBody = { status: response.status, detail: "Login failed" };
-      }
-      throw new CerberusApiError({ ...errorBody, status: response.status });
-    }
-
-    const data: LoginResponse = await response.json();
     setStoredJWT(data.access_token);
     return data;
   },
