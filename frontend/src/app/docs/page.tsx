@@ -180,7 +180,7 @@ export default function DocsPage() {
       <Heading id="quickstart-docker" level={3}>1. Start with Docker Compose</Heading>
       <CodeBlock
         lang="bash"
-        code={`git clone https://github.com/AgnijDutta/cerberus.git
+        code={`git clone https://github.com/agnij-dutta/cerberus.git
 cd cerberus
 docker compose up -d`}
       />
@@ -483,7 +483,7 @@ curl -H "X-API-Key: cerb_abc123..." \\
       <div className="mt-20 pt-8 border-t border-border-subtle flex items-center justify-between">
         <div />
         <a
-          href="https://github.com/AgnijDutta/cerberus"
+          href="https://github.com/agnij-dutta/cerberus"
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex items-center gap-2 text-[14px] text-text-secondary hover:text-accent transition-colors"

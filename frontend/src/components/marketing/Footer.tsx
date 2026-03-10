@@ -22,7 +22,7 @@ const columns = [
   {
     title: "Company",
     links: [
-      { label: "GitHub", href: "https://github.com/AgnijDutta/cerberus", external: true },
+      { label: "GitHub", href: "https://github.com/agnij-dutta/cerberus", external: true },
       { label: "Contributing", href: "#" },
       { label: "Discussions", href: "#" },
     ],

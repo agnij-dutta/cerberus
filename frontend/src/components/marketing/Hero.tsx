@@ -217,7 +217,7 @@ export function Hero() {
 
           {/* Secondary */}
           <a
-            href="https://github.com/AgnijDutta/cerberus"
+            href="https://github.com/agnij-dutta/cerberus"
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2.5 h-12 px-7 rounded-full border border-white/[0.12] bg-white/[0.04] backdrop-blur-md text-[15px] text-white/70 hover:text-white hover:bg-white/[0.08] hover:border-white/[0.18] transition-all duration-300"

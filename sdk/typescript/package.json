@@ -17,7 +17,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AgnijDutta/cerberus.git",
+    "url": "https://github.com/agnij-dutta/cerberus.git",
     "directory": "sdk/typescript"
   },
   "engines": {

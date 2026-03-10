@@ -205,7 +205,7 @@ function Sidebar() {
       {/* Footer */}
       <div className="px-4 py-4 border-t border-border-subtle shrink-0">
         <a
-          href="https://github.com/AgnijDutta/cerberus"
+          href="https://github.com/agnij-dutta/cerberus"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 text-[12px] text-text-tertiary hover:text-text-secondary transition-colors"

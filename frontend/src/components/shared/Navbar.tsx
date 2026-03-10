@@ -48,7 +48,7 @@ export function Navbar() {
               </a>
             ))}
             <a
-              href="https://github.com/AgnijDutta/cerberus"
+              href="https://github.com/agnij-dutta/cerberus"
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-2 text-text-secondary hover:text-text-primary rounded-lg hover:bg-white/[0.04] transition-all duration-200"

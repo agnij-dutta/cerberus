@@ -35,10 +35,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AgnijDutta/cerberus"
-Documentation = "https://github.com/AgnijDutta/cerberus/tree/main/docs"
-Repository = "https://github.com/AgnijDutta/cerberus"
-Issues = "https://github.com/AgnijDutta/cerberus/issues"
+Homepage = "https://github.com/agnij-dutta/cerberus"
+Documentation = "https://github.com/agnij-dutta/cerberus/tree/main/docs"
+Repository = "https://github.com/agnij-dutta/cerberus"
+Issues = "https://github.com/agnij-dutta/cerberus/issues"
 
 [tool.ruff]
 target-version = "py310"
