@@ -23,6 +23,9 @@ dependencies = [
     "prometheus-client>=0.20.0",
     "prometheus-fastapi-instrumentator>=6.1.0",
     "structlog>=24.1.0",
+    "pyjwt>=2.8.0",
+    "passlib[bcrypt]>=1.7.4",
+    "email-validator>=2.1.0",
 ]
 
 [project.optional-dependencies]
@@ -56,6 +59,8 @@ ignore = ["A003"]  # allow shadowing builtins on models (id, type, etc.)
 "app/api/v1/schemas/*" = ["TC003"]
 # FastAPI endpoints need Annotated dependency aliases and path param types at runtime
 "app/api/v1/endpoints/*" = ["TC001", "TC003"]
+# Dependencies module uses runtime imports for FastAPI DI and SQLAlchemy queries
+"app/dependencies.py" = ["TC001", "TC003"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]

@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     api_key_cache_size: int = 1024
     api_key_cache_ttl: int = 300  # seconds
 
+    # -- JWT -------------------------------------------------------------------
+    jwt_secret_key: str = "CHANGE-ME-in-production"  # noqa: S105
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 1440  # 24 hours
+
     # -- Rate-limit defaults ---------------------------------------------------
     default_window_seconds: int = 60
     default_limit: int = 100

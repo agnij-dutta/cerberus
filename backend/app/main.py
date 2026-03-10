@@ -52,6 +52,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         debug=settings.debug,
     )
 
+    # -- JWT secret warning ----------------------------------------------------
+    if settings.jwt_secret_key == "CHANGE-ME-in-production":
+        if settings.is_production:
+            logger.critical(
+                "jwt_secret_insecure",
+                msg="CERBERUS_JWT_SECRET_KEY is set to the default value. "
+                "This is NOT safe for production. Set a strong random secret.",
+            )
+        else:
+            logger.warning("jwt_secret_default", msg="Using default JWT secret (dev only).")
+
     # -- Database --------------------------------------------------------------
     init_db()
     logger.info("database_initialised")

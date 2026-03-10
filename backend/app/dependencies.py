@@ -7,14 +7,18 @@ Centralises all injectable dependencies so endpoints stay thin and testable.
 from __future__ import annotations
 
 from typing import Annotated
+from uuid import UUID
 
+import jwt
 import structlog
 from fastapi import Depends, Header, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import authenticate_api_key, is_admin_key
 from app.config import Settings, get_settings
-from app.core.exceptions import AuthorisationError
+from app.core.exceptions import AuthenticationError, AuthorisationError
 from app.core.limiter import LimiterService
 from app.core.policy import PolicyManager
 from app.db.models.tenant import Tenant
@@ -98,11 +102,67 @@ async def require_admin(
 
 
 # ---------------------------------------------------------------------------
+# JWT Authentication
+# ---------------------------------------------------------------------------
+
+_bearer_scheme = HTTPBearer(auto_error=False)
+
+
+async def get_current_tenant_from_jwt(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer_scheme)],
+    session: DBSession,
+) -> Tenant:
+    """
+    Dependency that authenticates a request via a JWT Bearer token.
+
+    Extracts the token from the ``Authorization: Bearer <token>`` header,
+    decodes it, and loads the corresponding tenant from the database.
+    """
+    if credentials is None:
+        raise AuthenticationError("Missing Bearer token.")
+
+    settings = get_settings()
+    token = credentials.credentials
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+    except jwt.ExpiredSignatureError:
+        raise AuthenticationError("Token has expired.")
+    except jwt.InvalidTokenError:
+        raise AuthenticationError("Invalid token.")
+
+    tenant_id_str: str | None = payload.get("sub")
+    if tenant_id_str is None:
+        raise AuthenticationError("Invalid token payload.")
+
+    try:
+        tenant_id = UUID(tenant_id_str)
+    except ValueError:
+        raise AuthenticationError("Invalid token payload.")
+
+    result = await session.execute(select(Tenant).where(Tenant.id == tenant_id))
+    tenant = result.scalar_one_or_none()
+
+    if tenant is None:
+        raise AuthenticationError("Tenant not found.")
+
+    if not tenant.is_active:
+        raise AuthenticationError("This account has been deactivated.")
+
+    return tenant
+
+
+# ---------------------------------------------------------------------------
 # Convenience type aliases for endpoints
 # ---------------------------------------------------------------------------
 
 CurrentTenant = Annotated[Tenant, Depends(get_current_tenant)]
 AdminTenant = Annotated[Tenant | None, Depends(require_admin)]
+JWTTenant = Annotated[Tenant, Depends(get_current_tenant_from_jwt)]
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 Redis = Annotated[object, Depends(get_redis)]
 Limiter = Annotated[LimiterService, Depends(get_limiter_service)]

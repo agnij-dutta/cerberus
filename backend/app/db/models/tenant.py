@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import enum
 
-from sqlalchemy import Boolean, Enum, Index, String, Text
+from sqlalchemy import Boolean, Enum, Index, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDPrimaryKey
@@ -32,6 +32,8 @@ class Tenant(Base, UUIDPrimaryKey, TimestampMixin):
     __tablename__ = "tenants"
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str | None] = mapped_column(String(320), nullable=True, unique=True, index=True)
+    password_hash: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_hash: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     api_key_prefix: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
@@ -44,7 +46,10 @@ class Tenant(Base, UUIDPrimaryKey, TimestampMixin):
     # Relationship — a tenant owns many policies
     policies = relationship("Policy", back_populates="tenant", lazy="selectin")
 
-    __table_args__ = (Index("ix_tenants_api_key_prefix", "api_key_prefix"),)
+    __table_args__ = (
+        Index("ix_tenants_api_key_prefix", "api_key_prefix"),
+        UniqueConstraint("email", name="uq_tenants_email"),
+    )
 
     def __repr__(self) -> str:
         return f"<Tenant {self.name} ({self.tier.value})>"

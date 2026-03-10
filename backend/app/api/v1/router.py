@@ -8,10 +8,11 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import analytics, check, health, policies, tenants
+from app.api.v1.endpoints import analytics, auth, check, health, policies, tenants
 
 router = APIRouter(prefix="/v1")
 
+router.include_router(auth.router)
 router.include_router(check.router)
 router.include_router(policies.router)
 router.include_router(tenants.router)

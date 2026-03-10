@@ -58,10 +58,10 @@ export function Navbar() {
           </div>
 
           <Link
-            href="#"
+            href="/login"
             className="group relative flex items-center gap-1.5 text-[13px] font-medium text-bg bg-accent hover:bg-accent-hover pl-4 pr-3 py-2 rounded-xl transition-all duration-200 btn-shimmer"
           >
-            <span className="relative z-10">Get Started</span>
+            <span className="relative z-10">Dashboard</span>
             <ArrowRight size={14} className="relative z-10 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </nav>
