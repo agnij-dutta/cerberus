@@ -3,19 +3,19 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --only=production
+RUN pnpm ci --only=production
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN pnpm ci
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-RUN npm run build
+RUN pnpm run build
 
 # Stage 3: Production runtime
 FROM node:20-alpine AS runner

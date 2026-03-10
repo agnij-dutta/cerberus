@@ -3,13 +3,13 @@
 import { motion } from "framer-motion";
 import {
   Zap,
-  Shield,
-  Clock,
-  BarChart3,
   Layers,
-  Globe,
+  Shield,
   Lock,
+  BarChart3,
+  Globe,
   RefreshCw,
+  Clock,
   Code2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,159 +18,111 @@ const features = [
   {
     icon: Zap,
     title: "Sub-Millisecond Checks",
-    description:
-      "Atomic Lua scripts execute entirely within Redis. No round-trip overhead, no race conditions. Typical check latency is under 800μs.",
-    accent: true,
+    desc: "Atomic Lua scripts execute entirely within Redis. Single round-trip, no race conditions. Typical latency under 800us.",
+    span: "lg:col-span-2",
   },
   {
     icon: Layers,
     title: "Multiple Algorithms",
-    description:
-      "Sliding window for smooth enforcement, token bucket for burst tolerance. Pick the right tool per endpoint, per policy.",
+    desc: "Sliding window for smooth enforcement, token bucket for burst tolerance. Choose per endpoint.",
   },
   {
     icon: Shield,
     title: "Atomic Operations",
-    description:
-      "Rate limiting logic runs inside Redis via EVALSHA. No TOCTOU bugs, no distributed locks. Correctness by construction.",
+    desc: "All logic runs inside Redis via EVALSHA. No TOCTOU bugs, no distributed locks needed.",
   },
   {
     icon: Lock,
     title: "Tenant Isolation",
-    description:
-      "Full multi-tenancy with API key authentication. Each tenant gets isolated policies, namespaced keys, and independent limits.",
+    desc: "Full multi-tenancy with API key auth. Each tenant gets isolated policies and namespaced keys.",
   },
   {
     icon: BarChart3,
-    title: "Real-Time Analytics",
-    description:
-      "Prometheus-native metrics with pre-built Grafana dashboards. Track allowed/blocked ratios, latency percentiles, and cache hit rates.",
+    title: "Prometheus Metrics",
+    desc: "Native metrics with pre-built Grafana dashboards. Track allowed/blocked ratios and latency percentiles.",
   },
   {
     icon: Globe,
     title: "Horizontally Scalable",
-    description:
-      "Stateless API layer, shared Redis backend. Add replicas without coordination. Pub/sub handles cache invalidation across nodes.",
+    desc: "Stateless API layer, shared Redis backend. Add replicas without coordination.",
   },
   {
     icon: RefreshCw,
     title: "Dynamic Policies",
-    description:
-      "Create, update, and delete rate limit policies at runtime via API. Changes propagate to all nodes within seconds.",
+    desc: "Create, update, and delete rate limit policies at runtime via API. Changes propagate instantly.",
   },
   {
     icon: Clock,
     title: "TTL-Bounded Memory",
-    description:
-      "Every Redis key auto-expires after its window duration. No background cleanup jobs, no memory leaks. Bounded by design.",
+    desc: "Every Redis key auto-expires after its window duration. No cleanup jobs, no memory leaks.",
   },
   {
     icon: Code2,
-    title: "SDK-Ready API",
-    description:
-      "Versioned REST API with standard rate-limit headers, RFC 7807 error responses, and official Python and TypeScript SDKs.",
+    title: "Official SDKs",
+    desc: "Versioned REST API with Python and TypeScript SDKs. Standard rate-limit headers and RFC 7807 errors.",
   },
 ];
 
-const container = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.06,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
-
 export function Features() {
   return (
-    <section id="features" className="relative py-28 px-6">
+    <section id="features" className="relative py-28 sm:py-36 px-6">
       <div className="max-w-6xl mx-auto">
-        {/* Section header */}
+        {/* Header */}
         <div className="text-center mb-16">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-xs font-mono uppercase tracking-widest text-cyan mb-4"
+            className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent mb-4"
           >
             Capabilities
           </motion.p>
           <motion.h2
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl font-bold tracking-tight mb-4"
           >
-            Everything you need to
-            <br />
-            <span className="text-gradient">enforce rate limits at scale</span>
+            Built for production
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-text-secondary max-w-xl mx-auto"
+            transition={{ delay: 0.05 }}
+            className="text-text-secondary max-w-lg mx-auto text-[15px]"
           >
-            Built for teams who need reliable, fast, and configurable rate
-            limiting without building it from scratch.
+            Everything you need to enforce rate limits at scale, without building it from scratch.
           </motion.p>
         </div>
 
-        {/* Feature grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          {features.map((feature, i) => {
-            const Icon = feature.icon;
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {features.map((f, i) => {
+            const Icon = f.icon;
             return (
               <motion.div
                 key={i}
-                variants={item}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.03 }}
                 className={cn(
-                  "group relative p-6 rounded-xl border transition-all duration-300",
-                  "border-border hover:border-border-light",
-                  "bg-surface/30 hover:bg-surface/60",
-                  feature.accent && "md:col-span-2 lg:col-span-1"
+                  "group relative p-6 rounded-xl border border-border-default bg-bg-card/50 hover:bg-bg-card-hover hover:border-border-bright transition-all duration-300",
+                  f.span
                 )}
               >
-                {feature.accent && (
-                  <div
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 50% 0%, var(--color-cyan-glow), transparent 70%)",
-                    }}
-                  />
-                )}
-                <div
-                  className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center mb-4",
-                    "bg-surface-hover text-text-secondary group-hover:text-cyan group-hover:bg-cyan-glow",
-                    "transition-colors duration-300"
-                  )}
-                >
-                  <Icon size={20} />
+                <div className="w-9 h-9 rounded-lg bg-bg-raised border border-border-default flex items-center justify-center mb-4 group-hover:border-accent/20 transition-colors">
+                  <Icon size={16} className="text-text-secondary group-hover:text-accent transition-colors" />
                 </div>
-                <h3 className="font-semibold text-base mb-2">
-                  {feature.title}
-                </h3>
+                <h3 className="text-[15px] font-semibold mb-2">{f.title}</h3>
                 <p className="text-sm text-text-secondary leading-relaxed">
-                  {feature.description}
+                  {f.desc}
                 </p>
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
