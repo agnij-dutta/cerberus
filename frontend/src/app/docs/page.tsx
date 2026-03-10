@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Copy, Check, ArrowRight, ExternalLink } from "lucide-react";
 import { useState } from "react";
-import Link from "next/link";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
