@@ -101,9 +101,7 @@ async def signup(body: SignupRequest, session: DBSession) -> SignupResponse:
     key (shown exactly once).
     """
     # Check for duplicate email
-    existing = await session.execute(
-        select(Tenant).where(Tenant.email == body.email)
-    )
+    existing = await session.execute(select(Tenant).where(Tenant.email == body.email))
     if existing.scalar_one_or_none() is not None:
         raise EmailConflictError()
 
@@ -144,9 +142,7 @@ async def login(body: LoginRequest, session: DBSession) -> LoginResponse:
 
     Returns a JWT access token on success.
     """
-    result = await session.execute(
-        select(Tenant).where(Tenant.email == body.email)
-    )
+    result = await session.execute(select(Tenant).where(Tenant.email == body.email))
     tenant = result.scalar_one_or_none()
 
     if tenant is None or tenant.password_hash is None:

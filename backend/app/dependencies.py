@@ -130,10 +130,10 @@ async def get_current_tenant_from_jwt(
             settings.jwt_secret_key,
             algorithms=[settings.jwt_algorithm],
         )
-    except jwt.ExpiredSignatureError:
-        raise AuthenticationError("Token has expired.")
-    except jwt.InvalidTokenError:
-        raise AuthenticationError("Invalid token.")
+    except jwt.ExpiredSignatureError as err:
+        raise AuthenticationError("Token has expired.") from err
+    except jwt.InvalidTokenError as err:
+        raise AuthenticationError("Invalid token.") from err
 
     tenant_id_str: str | None = payload.get("sub")
     if tenant_id_str is None:
@@ -141,8 +141,8 @@ async def get_current_tenant_from_jwt(
 
     try:
         tenant_id = UUID(tenant_id_str)
-    except ValueError:
-        raise AuthenticationError("Invalid token payload.")
+    except ValueError as err:
+        raise AuthenticationError("Invalid token payload.") from err
 
     result = await session.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
