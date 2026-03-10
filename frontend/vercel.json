@@ -2,7 +2,7 @@
   "framework": "nextjs",
   "buildCommand": "pnpm run build",
   "outputDirectory": ".next",
-  "installCommand": "pnpm ci",
+  "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
     {
       "source": "/api/v1/:path*",
