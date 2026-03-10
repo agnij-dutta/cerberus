@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -21,13 +21,6 @@ export const metadata: Metadata = {
   },
   description:
     "Sub-millisecond rate limiting for modern APIs. Sliding window and token bucket algorithms, powered by atomic Redis Lua scripts.",
-  keywords: [
-    "rate limiting",
-    "API protection",
-    "Redis",
-    "sliding window",
-    "token bucket",
-  ],
 };
 
 export default function RootLayout({
@@ -36,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen antialiased font-sans">{children}</body>
     </html>
   );

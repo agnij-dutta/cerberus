@@ -13,8 +13,8 @@ const columns = [
   {
     title: "Developers",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
+      { label: "Documentation", href: "/docs" },
+      { label: "API Reference", href: "/docs#check-endpoint" },
       { label: "SDKs", href: "#" },
       { label: "Self-Hosting", href: "#" },
     ],
@@ -31,25 +31,26 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border-default bg-bg-raised">
-      <div className="max-w-6xl mx-auto px-6 py-14">
+    <footer className="relative border-t border-border-subtle">
+      {/* Top glow line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
+
+      <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-          {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Logo className="mb-4" />
-            <p className="text-sm text-text-secondary leading-relaxed max-w-xs">
-              Open-source rate limiting infrastructure. Protect your APIs with
-              sub-millisecond enforcement powered by Redis.
+            <Logo className="mb-5" />
+            <p className="text-[13px] text-text-secondary leading-[1.7] max-w-xs">
+              Open-source rate limiting infrastructure.
+              Protect your APIs with sub-millisecond enforcement powered by Redis.
             </p>
           </div>
 
-          {/* Link columns */}
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-[12px] font-mono uppercase tracking-wider text-text-tertiary mb-4">
+              <h4 className="text-[11px] font-mono uppercase tracking-[0.12em] text-text-tertiary mb-5">
                 {col.title}
               </h4>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     {"external" in link ? (
@@ -57,14 +58,14 @@ export function Footer() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+                        className="text-[13px] text-text-secondary hover:text-text-primary transition-colors duration-200"
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+                        className="text-[13px] text-text-secondary hover:text-text-primary transition-colors duration-200"
                       >
                         {link.label}
                       </Link>
@@ -76,9 +77,9 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-14 pt-8 border-t border-border-subtle text-xs text-text-tertiary">
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-16 pt-8 border-t border-border-subtle text-[12px] text-text-tertiary">
           <p>&copy; {new Date().getFullYear()} Agnij Dutta. MIT License.</p>
-          <p className="mt-2 sm:mt-0">
+          <p className="mt-2 sm:mt-0 font-mono text-[11px]">
             Built with FastAPI + Redis + Next.js
           </p>
         </div>

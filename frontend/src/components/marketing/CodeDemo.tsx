@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -64,7 +64,7 @@ const tabs = [
       { tokens: [{ text: '    "policy": "api-default"', c: "str" }] },
       { tokens: [{ text: "  }'", c: "str" }] },
       { tokens: [] },
-      { tokens: [{ text: "# Response", c: "cmt" }] },
+      { tokens: [{ text: "# Response  200 OK", c: "cmt" }] },
       { tokens: [{ text: "{", c: "t" }] },
       { tokens: [{ text: '  "allowed": ', c: "t" }, { text: "true", c: "kw" }, { text: ",", c: "t" }] },
       { tokens: [{ text: '  "remaining": ', c: "t" }, { text: "97", c: "num" }, { text: ",", c: "t" }] },
@@ -80,7 +80,7 @@ const colorMap: Record<string, string> = {
   str: "text-code-green",
   cmt: "text-code-comment italic",
   num: "text-code-orange",
-  t: "text-text-primary",
+  t: "text-text-primary/90",
 };
 
 export function CodeDemo() {
@@ -99,103 +99,109 @@ export function CodeDemo() {
   };
 
   return (
-    <section className="relative py-24 sm:py-32 px-6">
+    <section className="relative py-28 sm:py-36 px-6">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+        <div className="text-center mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent mb-4"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass text-[12px] font-mono text-text-secondary mb-6"
           >
+            <Terminal size={12} className="text-accent" />
             Integration
-          </motion.p>
+          </motion.div>
           <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl sm:text-[2.75rem] font-bold tracking-[-0.03em] mb-5"
+          >
+            <span className="text-gradient-white">Three lines to protect any API.</span>
+          </motion.h2>
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold tracking-tight mb-4"
-          >
-            Three lines to protect any API
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             transition={{ delay: 0.05 }}
-            className="text-text-secondary text-[15px]"
+            className="text-text-secondary text-[16px]"
           >
-            Drop in the SDK, configure a policy, and you&apos;re done. Cerberus handles the rest.
+            Drop in the SDK, configure a policy, and you&apos;re done.
           </motion.p>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glow-box rounded-xl overflow-hidden bg-bg-card"
+          className="relative"
         >
-          {/* Tabs */}
-          <div className="flex items-center justify-between border-b border-border-default">
-            <div className="flex">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={cn(
-                    "relative px-5 py-3 text-[13px] font-medium transition-colors",
-                    activeTab === tab.id
-                      ? "text-accent"
-                      : "text-text-tertiary hover:text-text-secondary"
-                  )}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <motion.div
-                      layoutId="code-tab-indicator"
-                      className="absolute inset-x-0 bottom-0 h-px bg-accent"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={handleCopy}
-              className="mr-4 p-1.5 rounded-md text-text-tertiary hover:text-text-secondary hover:bg-bg-card-hover transition-colors"
-              title="Copy code"
-            >
-              {copied ? <Check size={14} className="text-accent" /> : <Copy size={14} />}
-            </button>
-          </div>
+          {/* Glow behind */}
+          <div className="absolute -inset-4 bg-accent/[0.03] rounded-3xl blur-2xl pointer-events-none" />
 
-          {/* Code */}
-          <div className="p-5 min-h-[340px] overflow-x-auto">
-            <AnimatePresence mode="wait">
-              <motion.pre
-                key={activeTab}
-                initial={{ opacity: 0, x: 8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.12 }}
-                className="font-mono text-[13px] leading-6"
-              >
-                {active.lines.map((line, i) => (
-                  <div key={i} className="flex">
-                    <span className="select-none text-text-tertiary/40 w-7 shrink-0 text-right mr-4 text-xs tabular-nums leading-6">
-                      {i + 1}
-                    </span>
-                    <span>
-                      {line.tokens.map((token, j) => (
-                        <span key={j} className={colorMap[token.c] || ""}>
-                          {token.text}
+          <div className="relative animated-border">
+            <div className="glass-strong rounded-2xl overflow-hidden">
+              {/* Tabs */}
+              <div className="flex items-center justify-between border-b border-white/[0.05] px-1">
+                <div className="flex">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                        "relative px-5 py-3.5 text-[13px] font-medium transition-colors",
+                        activeTab === tab.id
+                          ? "text-accent"
+                          : "text-text-tertiary hover:text-text-secondary"
+                      )}
+                    >
+                      {tab.label}
+                      {activeTab === tab.id && (
+                        <motion.div
+                          layoutId="code-tab-active"
+                          className="absolute inset-x-2 bottom-0 h-[2px] rounded-full bg-accent"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className="mr-3 p-2 rounded-lg text-text-tertiary hover:text-text-secondary hover:bg-white/[0.04] transition-all"
+                  title="Copy code"
+                >
+                  {copied ? <Check size={14} className="text-accent" /> : <Copy size={14} />}
+                </button>
+              </div>
+
+              {/* Code */}
+              <div className="p-6 min-h-[340px] overflow-x-auto">
+                <AnimatePresence mode="wait">
+                  <motion.pre
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="font-mono text-[12.5px] leading-[1.75]"
+                  >
+                    {active.lines.map((line, i) => (
+                      <div key={i} className="flex">
+                        <span className="select-none text-text-tertiary/30 w-7 shrink-0 text-right mr-5 text-[11px] tabular-nums leading-[inherit]">
+                          {i + 1}
                         </span>
-                      ))}
-                    </span>
-                  </div>
-                ))}
-              </motion.pre>
-            </AnimatePresence>
+                        <span>
+                          {line.tokens.map((token, j) => (
+                            <span key={j} className={colorMap[token.c] || ""}>{token.text}</span>
+                          ))}
+                        </span>
+                      </div>
+                    ))}
+                  </motion.pre>
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
