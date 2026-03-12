@@ -1,0 +1,114 @@
+name: Publish SDKs
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Which packages to publish (comma-separated: python,python-fastapi,typescript,express)"
+        required: true
+        default: "python,python-fastapi,typescript,express"
+
+permissions:
+  contents: read
+  id-token: write  # Required for PyPI OIDC trusted publishing
+
+jobs:
+  # ── Python SDK (cerberus-sdk) ──────────────────────────────
+  publish-python:
+    name: Publish cerberus-sdk to PyPI
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'release' ||
+      contains(github.event.inputs.packages, 'python')
+    defaults:
+      run:
+        working-directory: sdk/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: pip install build
+      - name: Build package
+        run: python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: sdk/python/dist/
+
+  # ── Python FastAPI middleware (cerberus-fastapi) ───────────
+  publish-python-fastapi:
+    name: Publish cerberus-fastapi to PyPI
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'release' ||
+      contains(github.event.inputs.packages, 'python-fastapi')
+    defaults:
+      run:
+        working-directory: sdk/python-fastapi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: pip install build
+      - name: Build package
+        run: python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: sdk/python-fastapi/dist/
+
+  # ── TypeScript SDK (@cerberus/sdk) ─────────────────────────
+  publish-typescript:
+    name: Publish @cerberus/sdk to npm
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'release' ||
+      contains(github.event.inputs.packages, 'typescript')
+    defaults:
+      run:
+        working-directory: sdk/typescript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # ── Express middleware (@cerberus/express) ──────────────────
+  publish-express:
+    name: Publish @cerberus/express to npm
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'release' ||
+      contains(github.event.inputs.packages, 'express')
+    defaults:
+      run:
+        working-directory: sdk/express
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

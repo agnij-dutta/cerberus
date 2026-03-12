@@ -15,8 +15,7 @@ class CheckResult:
     allowed: bool
     remaining: int
     limit: int
-    reset: int
-    retry_after: float | None
+    retry_after_ms: int
 
 
 @dataclass(frozen=True)
@@ -29,7 +28,6 @@ class Policy:
     algorithm: str
     limit: int
     window_seconds: int
-    burst_limit: int | None
     is_active: bool
 
 
@@ -53,17 +51,18 @@ class RateLimitedError(CerberusError):
 class CerberusClient:
     """Client for the Cerberus rate limiting API.
 
-    Usage:
+    Usage::
+
         client = CerberusClient(
             base_url="http://localhost:8000",
-            api_key="your-tenant-api-key",
+            api_key="cerb_your_api_key",
         )
 
-        result = client.check("user:42", "standard-api")
+        result = client.check("policy-uuid", "user:42")
         if result.allowed:
             # proceed
         else:
-            # back off for result.retry_after seconds
+            # back off
     """
 
     def __init__(
@@ -75,7 +74,7 @@ class CerberusClient:
         self._base_url = base_url.rstrip("/")
         self._api_key = api_key
         self._client = httpx.Client(
-            base_url=f"{self._base_url}/api/v1",
+            base_url=f"{self._base_url}/v1",
             headers={
                 "X-API-Key": api_key,
                 "Content-Type": "application/json",
@@ -85,26 +84,27 @@ class CerberusClient:
 
     def check(
         self,
-        key: str,
-        policy: str,
-        cost: int = 1,
+        policy_id: str,
+        identifier: str,
+        tokens: int = 1,
     ) -> CheckResult:
-        """Check a rate limit. This is the hot path — keep it fast.
+        """Check a rate limit.
 
         Args:
-            key: The identifier to rate limit (user ID, IP, etc.)
-            policy: Name of the policy to check against.
-            cost: How many tokens this request costs (default 1).
+            policy_id: UUID of the policy to evaluate against.
+            identifier: The key to rate limit (user ID, IP, etc.)
+            tokens: Number of tokens to consume (default 1).
 
         Returns:
             CheckResult with allowed status and remaining quota.
 
         Raises:
             CerberusError: If the API returns an error.
+            RateLimitedError: If the request is rate limited (429).
         """
         response = self._client.post(
             "/check",
-            json={"key": key, "policy": policy, "cost": cost},
+            json={"policy_id": policy_id, "identifier": identifier, "tokens": tokens},
         )
         self._raise_for_status(response)
         data = response.json()
@@ -112,8 +112,7 @@ class CerberusClient:
             allowed=data["allowed"],
             remaining=data["remaining"],
             limit=data["limit"],
-            reset=data["reset"],
-            retry_after=data.get("retry_after"),
+            retry_after_ms=data.get("retry_after_ms", 0),
         )
 
     def create_policy(
@@ -121,30 +120,15 @@ class CerberusClient:
         name: str,
         limit: int,
         window_seconds: int,
-        algorithm: Literal["sliding_window", "fixed_window", "token_bucket"] = "sliding_window",
-        burst_limit: int | None = None,
+        algorithm: Literal["sliding_window", "token_bucket"] = "sliding_window",
     ) -> Policy:
-        """Create a new rate limit policy.
-
-        Args:
-            name: Unique policy name within your tenant.
-            limit: Maximum requests per window.
-            window_seconds: Window duration in seconds.
-            algorithm: Rate limiting algorithm to use.
-            burst_limit: Max burst size (token_bucket only).
-
-        Returns:
-            The created Policy.
-        """
+        """Create a new rate limit policy."""
         payload: dict = {
             "name": name,
             "algorithm": algorithm,
             "limit": limit,
             "window_seconds": window_seconds,
         }
-        if burst_limit is not None:
-            payload["burst_limit"] = burst_limit
-
         response = self._client.post("/policies", json=payload)
         self._raise_for_status(response)
         return self._parse_policy(response.json())
@@ -167,11 +151,6 @@ class CerberusClient:
         response = self._client.delete(f"/policies/{policy_id}")
         self._raise_for_status(response)
 
-    def health(self) -> dict:
-        """Check the Cerberus service health."""
-        response = self._client.get("/health")
-        return response.json()
-
     def close(self) -> None:
         """Close the underlying HTTP client."""
         self._client.close()
@@ -191,7 +170,6 @@ class CerberusClient:
             algorithm=data["algorithm"],
             limit=data["limit"],
             window_seconds=data["window_seconds"],
-            burst_limit=data.get("burst_limit"),
             is_active=data["is_active"],
         )
 

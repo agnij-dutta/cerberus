@@ -3,18 +3,19 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cerberus-sdk"
+name = "cerberus-fastapi"
 version = "1.0.0"
-description = "Python SDK for Cerberus Rate-Limit-as-a-Service"
+description = "FastAPI middleware for Cerberus Rate-Limit-as-a-Service"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Agnij Dutta" }]
 readme = "README.md"
-keywords = ["rate-limiting", "api", "sdk"]
+keywords = ["rate-limiting", "fastapi", "middleware", "cerberus"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Framework :: FastAPI",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -23,13 +24,14 @@ classifiers = [
 ]
 
 dependencies = [
-    "httpx>=0.25.0",
+    "cerberus-sdk>=1.0.0",
+    "fastapi>=0.100.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
-    "pytest-httpx>=0.30.0",
+    "httpx>=0.25.0",
     "ruff>=0.2.0",
     "mypy>=1.8.0",
 ]
@@ -41,7 +43,7 @@ Repository = "https://github.com/agnij-dutta/cerberus"
 Issues = "https://github.com/agnij-dutta/cerberus/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["cerberus"]
+packages = ["cerberus_fastapi"]
 
 [tool.ruff]
 target-version = "py310"

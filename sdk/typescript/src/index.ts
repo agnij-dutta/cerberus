@@ -5,14 +5,12 @@
  * ```typescript
  * const client = new CerberusClient({
  *   baseUrl: "http://localhost:8000",
- *   apiKey: "your-tenant-api-key",
+ *   apiKey: "cerb_your_api_key",
  * });
  *
- * const result = await client.check("user:42", "standard-api");
+ * const result = await client.check("policy-uuid", "user:42");
  * if (result.allowed) {
  *   // proceed
- * } else {
- *   // back off for result.retryAfter seconds
  * }
  * ```
  */
@@ -28,18 +26,16 @@ export interface CheckResult {
   allowed: boolean;
   remaining: number;
   limit: number;
-  reset: number;
-  retryAfter: number | null;
+  retryAfterMs: number;
 }
 
 export interface Policy {
   id: string;
   tenantId: string;
   name: string;
-  algorithm: "sliding_window" | "fixed_window" | "token_bucket";
+  algorithm: "sliding_window" | "token_bucket";
   limit: number;
   windowSeconds: number;
-  burstLimit: number | null;
   isActive: boolean;
 }
 
@@ -47,15 +43,7 @@ export interface CreatePolicyParams {
   name: string;
   limit: number;
   windowSeconds: number;
-  algorithm?: "sliding_window" | "fixed_window" | "token_bucket";
-  burstLimit?: number;
-}
-
-export interface HealthStatus {
-  status: string;
-  redis: string;
-  postgres: string;
-  version: string;
+  algorithm?: "sliding_window" | "token_bucket";
 }
 
 export class CerberusError extends Error {
@@ -90,27 +78,25 @@ export class CerberusClient {
   }
 
   /**
-   * Check a rate limit. This is the hot path.
+   * Check a rate limit.
    *
-   * @param key - The identifier to rate limit (user ID, IP, etc.)
-   * @param policy - Name of the policy to check against
-   * @param cost - How many tokens this request costs (default: 1)
+   * @param policyId - UUID of the policy to evaluate against
+   * @param identifier - The key to rate limit (user ID, IP, etc.)
+   * @param tokens - Number of tokens to consume (default: 1)
    */
-  async check(key: string, policy: string, cost: number = 1): Promise<CheckResult> {
+  async check(policyId: string, identifier: string, tokens: number = 1): Promise<CheckResult> {
     const data = await this.request<{
       allowed: boolean;
       remaining: number;
       limit: number;
-      reset: number;
-      retry_after: number | null;
-    }>("POST", "/check", { key, policy, cost });
+      retry_after_ms: number;
+    }>("POST", "/check", { policy_id: policyId, identifier, tokens });
 
     return {
       allowed: data.allowed,
       remaining: data.remaining,
       limit: data.limit,
-      reset: data.reset,
-      retryAfter: data.retry_after,
+      retryAfterMs: data.retry_after_ms,
     };
   }
 
@@ -122,9 +108,6 @@ export class CerberusClient {
       limit: params.limit,
       window_seconds: params.windowSeconds,
     };
-    if (params.burstLimit !== undefined) {
-      body.burst_limit = params.burstLimit;
-    }
 
     const data = await this.request<Record<string, unknown>>("POST", "/policies", body);
     return this.parsePolicy(data);
@@ -147,16 +130,8 @@ export class CerberusClient {
     await this.request("DELETE", `/policies/${policyId}`);
   }
 
-  /** Check the Cerberus service health. */
-  async health(): Promise<HealthStatus> {
-    const response = await fetch(`${this.baseUrl}/health`, {
-      signal: AbortSignal.timeout(this.timeout),
-    });
-    return response.json();
-  }
-
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
-    const url = `${this.baseUrl}/api/v1${path}`;
+    const url = `${this.baseUrl}/v1${path}`;
 
     const init: RequestInit = {
       method,
@@ -205,7 +180,6 @@ export class CerberusClient {
       algorithm: data.algorithm as Policy["algorithm"],
       limit: data.limit as number,
       windowSeconds: data.window_seconds as number,
-      burstLimit: (data.burst_limit as number) ?? null,
       isActive: data.is_active as boolean,
     };
   }
