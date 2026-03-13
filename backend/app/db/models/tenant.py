@@ -35,7 +35,7 @@ class Tenant(Base, UUIDPrimaryKey, TimestampMixin):
     email: Mapped[str | None] = mapped_column(String(320), nullable=True, unique=True, index=True)
     password_hash: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_hash: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
-    api_key_prefix: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    api_key_prefix: Mapped[str] = mapped_column(String(16), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     tier: Mapped[TenantTier] = mapped_column(
         Enum(TenantTier, name="tenant_tier"),
